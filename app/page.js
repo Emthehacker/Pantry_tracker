@@ -3,16 +3,37 @@ import Image from "next/image";
 import {useState, useEffect } from "react";
 import {firestore } from "@/firebase";
 import {Box, Typography} from "@mui/material";
+import { collection, query, getDocs } from "firebase/firestore";
 
 
 export default function Home() {
+  //manage our inventory list, modal state, and new item input respectively
   const [inventory, setInventory] = useState([]);
-  const [open, setOpen] = useState([])
-  const [itemName, setItemName] = useState([])
-
-  return {
-    <Box> <Typography variant="h1"> Inventory Management </Typography> </Box>
+  const [open, setOpen] = useState(false)
+  const [itemName, setItemName] = useState("")
+  //Implement inventory fetching
+  const updateInventory = async () => {
+    const snapshot = query(collection(firestore, 'inventory'))
+    const docs = await getDocs(snapshot)
+    const inventoryList = []
+    docs.forEach((doc) => {
+      inventoryList.push(
+        {name: doc.id,
+          ...doc.data(),
+        })
+    })
+    setInventory(inventoryList)
   }
+
+
+
+
+   return( 
+   <Box>
+    <Typography variant="h1">Inventory Management</Typography>
+  </Box>
+  )
+
 }
 
 
